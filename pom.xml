@@ -13,7 +13,7 @@
 	<version>${rversion}</version>
 	<name>repchain</name>
 	<properties>
-		<rversion>1.0</rversion>
+		<rversion>1.1</rversion>
 		<java.version>1.8</java.version>
 		<RCJava.version>2.0.0-SNAPSHOT</RCJava.version>
 		<commons-io.version>2.11.0</commons-io.version>
