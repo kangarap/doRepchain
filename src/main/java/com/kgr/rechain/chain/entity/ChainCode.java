@@ -1,4 +1,4 @@
-package com.kgr.rechain.chain.config;
+package com.kgr.rechain.chain.entity;
 
 import com.rcjava.protos.Peer;
 import lombok.Data;

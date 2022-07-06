@@ -8,7 +8,8 @@ target/
 .DS_Store
 rebel.xml
 DemoApplication.java
-TTTTPL.scala
+*.scala
+*.yml
 ### STS ###
 .apt_generated
 .classpath
