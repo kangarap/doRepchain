@@ -79,7 +79,7 @@ public class ChainConfiguration {
     }
 
 
-    @Bean
+    @Bean("chaincodeMap")
     public Map<String, ChainCode> injectChainCodeId() {
 
         Map<String, ChainCode> chainCodeMap = new HashMap<>();
