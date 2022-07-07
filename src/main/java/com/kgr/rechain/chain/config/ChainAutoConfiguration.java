@@ -37,7 +37,7 @@ public class ChainAutoConfiguration {
     private ChainProperties chainProperties;
 
     @Bean
-    @ConditionalOnMissingBean
+//    @ConditionalOnMissingBean
     public ChainUserManager chainUserManager() throws IOException {
 
         Optional<ChainUser> chainUserOptional =  chainProperties.getUser().stream().filter(user -> ADMIN.equals(user.getType())).findFirst();
@@ -101,7 +101,7 @@ public class ChainAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean
+//    @ConditionalOnMissingBean
     public ChainNetManager chainNetManager() {
 
         Map<String, ChainNet> map = Maps.newHashMap();
