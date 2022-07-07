@@ -9,7 +9,6 @@ import com.kgr.rechain.chain.entity.ChainNet;
 import com.kgr.rechain.chain.entity.ChainUser;
 import com.rcjava.protos.Peer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -113,7 +112,7 @@ public class ChainAutoConfiguration {
 
 
     @Bean
-    @ConditionalOnMissingBean
+//    @ConditionalOnMissingBean
     public ChainCodeIdManager chainCodeIdManager() {
         Map<String, ChainCode> chainCodeMap = new HashMap<>();
 
