@@ -3,10 +3,10 @@ package com.kgr.rechain.chain.utils;
 import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.JsonFormat;
-import com.kgr.rechain.chain.entity.ChainCode;
 import com.kgr.rechain.chain.core.ChainCodeIdManager;
 import com.kgr.rechain.chain.core.ChainNetManager;
 import com.kgr.rechain.chain.core.ChainUserManager;
+import com.kgr.rechain.chain.entity.ChainCode;
 import com.kgr.rechain.chain.entity.ChainUser;
 import com.rcjava.protos.Peer;
 import com.rcjava.tran.impl.DeployTran;
@@ -31,7 +31,7 @@ import static com.kgr.rechain.chain.utils.Constants.*;
  * @author kgr
  * @create 2022-07-04 09:48
  */
-@Component
+@Component("chainUtils")
 public class ChainUtils {
 
     @Resource
