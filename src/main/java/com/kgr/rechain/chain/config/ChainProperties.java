@@ -14,7 +14,6 @@ import java.util.List;
  * @create 2022-07-05 10:38
  */
 @Data
-@Component
 @ConfigurationProperties(prefix = "chain")
 public class ChainProperties {
     private List<ChainNet> net;

@@ -9,6 +9,7 @@ import com.kgr.rechain.chain.entity.ChainNet;
 import com.kgr.rechain.chain.entity.ChainUser;
 import com.rcjava.protos.Peer;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,12 +31,13 @@ import static com.kgr.rechain.chain.utils.Constants.*;
 @Configuration
 @EnableConfigurationProperties(ChainProperties.class)
 @Slf4j
-public class ChainConfiguration {
+public class ChainAutoConfiguration {
 
     @Resource
     private ChainProperties chainProperties;
 
     @Bean
+    @ConditionalOnMissingBean
     public ChainUserManager chainUserManager() throws IOException {
 
         Optional<ChainUser> chainUserOptional =  chainProperties.getUser().stream().filter(user -> ADMIN.equals(user.getType())).findFirst();
@@ -99,6 +101,7 @@ public class ChainConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public ChainNetManager chainNetManager() {
 
         Map<String, ChainNet> map = Maps.newHashMap();
@@ -110,6 +113,7 @@ public class ChainConfiguration {
 
 
     @Bean
+    @ConditionalOnMissingBean
     public ChainCodeIdManager chainCodeIdManager() {
         Map<String, ChainCode> chainCodeMap = new HashMap<>();
 
