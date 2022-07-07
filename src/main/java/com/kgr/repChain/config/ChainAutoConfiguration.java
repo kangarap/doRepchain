@@ -1,12 +1,13 @@
-package com.kgr.rechain.chain.config;
+package com.kgr.repChain.config;
 
 import com.google.common.collect.Maps;
-import com.kgr.rechain.chain.core.ChainCodeIdManager;
-import com.kgr.rechain.chain.core.ChainNetManager;
-import com.kgr.rechain.chain.core.ChainUserManager;
-import com.kgr.rechain.chain.entity.ChainCode;
-import com.kgr.rechain.chain.entity.ChainNet;
-import com.kgr.rechain.chain.entity.ChainUser;
+import com.kgr.repChain.core.ChainCodeIdManager;
+import com.kgr.repChain.core.ChainNetManager;
+import com.kgr.repChain.core.ChainService;
+import com.kgr.repChain.core.ChainUserManager;
+import com.kgr.repChain.entity.ChainCode;
+import com.kgr.repChain.entity.ChainNet;
+import com.kgr.repChain.entity.ChainUser;
 import com.rcjava.protos.Peer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -21,7 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static com.kgr.rechain.chain.utils.Constants.*;
+import static com.kgr.repChain.utils.Constants.*;
 
 /**
  * @author kgr
@@ -128,6 +129,15 @@ public class ChainAutoConfiguration {
         return new ChainCodeIdManager(chainCodeMap);
     }
 
+
+    @Bean
+    public ChainService chainService(
+            ChainUserManager chainUserManager,
+            ChainNetManager chainNetManager,
+            ChainCodeIdManager chainCodeIdManager
+    ) {
+        return new ChainService(chainUserManager, chainNetManager, chainCodeIdManager);
+    }
 }
 
 

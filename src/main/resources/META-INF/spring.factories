@@ -1,2 +1,2 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  com.kgr.rechain.chain.config.ChainAutoConfiguration
+  com.kgr.repChain.config.ChainAutoConfiguration

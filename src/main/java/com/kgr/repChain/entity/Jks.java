@@ -1,4 +1,4 @@
-package com.kgr.rechain.chain.entity;
+package com.kgr.repChain.entity;
 
 import lombok.Data;
 

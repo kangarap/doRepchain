@@ -1,6 +1,6 @@
-package com.kgr.rechain.chain.core;
+package com.kgr.repChain.core;
 
-import com.kgr.rechain.chain.entity.ChainUser;
+import com.kgr.repChain.entity.ChainUser;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;

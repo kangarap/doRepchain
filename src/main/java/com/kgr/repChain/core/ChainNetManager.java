@@ -1,12 +1,12 @@
-package com.kgr.rechain.chain.core;
+package com.kgr.repChain.core;
 
-import com.kgr.rechain.chain.entity.ChainNet;
+import com.kgr.repChain.entity.ChainNet;
 import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
-import static com.kgr.rechain.chain.utils.Constants.BIZ;
-import static com.kgr.rechain.chain.utils.Constants.IDENTITY;
+import static com.kgr.repChain.utils.Constants.BIZ;
+import static com.kgr.repChain.utils.Constants.IDENTITY;
 
 /**
  * @author kgr

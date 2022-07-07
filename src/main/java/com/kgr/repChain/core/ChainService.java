@@ -1,13 +1,10 @@
-package com.kgr.rechain.chain.utils;
+package com.kgr.repChain.core;
 
 import com.alibaba.fastjson2.JSONObject;
 import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.JsonFormat;
-import com.kgr.rechain.chain.core.ChainCodeIdManager;
-import com.kgr.rechain.chain.core.ChainNetManager;
-import com.kgr.rechain.chain.core.ChainUserManager;
-import com.kgr.rechain.chain.entity.ChainCode;
-import com.kgr.rechain.chain.entity.ChainUser;
+import com.kgr.repChain.entity.ChainCode;
+import com.kgr.repChain.entity.ChainUser;
 import com.rcjava.protos.Peer;
 import com.rcjava.tran.impl.DeployTran;
 import com.rcjava.tran.impl.InvokeTran;
@@ -16,32 +13,26 @@ import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.io.FileUtils;
-import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import static com.kgr.rechain.chain.utils.Constants.*;
+import static com.kgr.repChain.utils.Constants.*;
 
 /**
  * @author kgr
  * @create 2022-07-04 09:48
  */
-@Component("chainUtils")
-public class ChainUtils {
+//@Component
+@AllArgsConstructor
+public class ChainService {
 
-    @Resource
-    ChainUserManager chainUserManager;
-
-    @Resource
-    ChainNetManager chainNetManager;
-
-    @Resource
-    ChainCodeIdManager chainCodeIdManager;
+    private final ChainUserManager chainUserManager;
+    private final ChainNetManager chainNetManager;
+    private final ChainCodeIdManager chainCodeIdManager;
 
 
     /**

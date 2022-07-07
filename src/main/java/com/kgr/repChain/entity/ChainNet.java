@@ -1,4 +1,4 @@
-package com.kgr.rechain.chain.entity;
+package com.kgr.repChain.entity;
 
 import com.rcjava.client.ChainInfoClient;
 import com.rcjava.client.TranPostClient;
