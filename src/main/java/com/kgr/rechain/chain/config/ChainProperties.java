@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Data
 @ConfigurationProperties(prefix = "chain")
+@Component
 public class ChainProperties {
     private List<ChainNet> net;
     private List<ChainUser> user;
