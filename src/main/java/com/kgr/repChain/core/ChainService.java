@@ -8,6 +8,7 @@ import com.kgr.repChain.entity.ChainUser;
 import com.rcjava.protos.Peer;
 import com.rcjava.tran.impl.DeployTran;
 import com.rcjava.tran.impl.InvokeTran;
+import com.rcjava.util.CertUtil;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.apache.commons.codec.binary.Hex;
@@ -229,6 +230,19 @@ public class ChainService {
 
 
     /**
+     * 根据 alias，password 创建jks文件
+     * @param saveFile 保存文件名 如 /Users/lihao/Desktop/RCJava-core/test.jks
+     * @param alias    别名 相当于jks账户
+     * @param password 密码
+     * @throws Exception 异常
+     */
+    public void createJks(String saveFile, String alias, String password) throws Exception {
+
+        CertUtil.genJksFile(new File(saveFile), alias, password);
+    }
+
+
+    /**
      *
      * @param code       操作类型
      * @param chainUser  操作用户
@@ -237,7 +251,7 @@ public class ChainService {
      * @param params     操作合约方法参数 json格式
      */
 
-    public void genInvokeTran(int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception {
+    private void genInvokeTran(int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception {
         String tranId =  UUID.randomUUID().toString();
 
         Peer.TransactionResult transactionResult;
@@ -294,7 +308,7 @@ public class ChainService {
 
 
 
-    public Peer.Operate genOperate (String authFullName, String description, String register, boolean isPublish) {
+    private Peer.Operate genOperate (String authFullName, String description, String register, boolean isPublish) {
         long millis = System.currentTimeMillis();
         return Peer.Operate.newBuilder()
                 .setOpId(DigestUtils.sha256Hex(authFullName))
@@ -317,7 +331,7 @@ public class ChainService {
      * @param granted credence-net:usr-0
      * @param opId  credence-net:CredenceTPL.deploy
      */
-    public Peer.Authorize genAuthorize(String id, String grantBy, String granted, String opId) {
+    private Peer.Authorize genAuthorize(String id, String grantBy, String granted, String opId) {
 
         long millis = System.currentTimeMillis();
 
