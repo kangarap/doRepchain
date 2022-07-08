@@ -23,8 +23,7 @@ public abstract class AbstractChainCodeIdIoc implements ChainCodeIoc {
     }
 
     @Override
-    public void init() {
-    }
+    public void init() {}
 
     @Override
     public ChainCode getDidChain(){
@@ -40,6 +39,9 @@ public abstract class AbstractChainCodeIdIoc implements ChainCodeIoc {
     @Override
     public ChainCode getChainCode(String name) {
 
+        if (!chainCodeMap.containsKey(name)) {
+            throw new RuntimeException(String.format("合约 %s 不存在！", name));
+        }
         return chainCodeMap.get(name);
     }
 }
