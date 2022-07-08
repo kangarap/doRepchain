@@ -27,14 +27,10 @@ import static com.kgr.repChain.utils.Constants.*;
  * @author kgr
  * @create 2022-07-04 09:48
  */
-//@Component
 @AllArgsConstructor
 public class ChainService {
 
-    private final ChainUserManager chainUserManager;
     private final ChainNetManager chainNetManager;
-    private final ChainCodeIdManager chainCodeIdManager;
-
 
     /**
      * 1～6 就是新用户从注册到最后调用合约代码的过程
@@ -59,69 +55,76 @@ public class ChainService {
 
     /**
      * 向身份链注册新用户
-     * @param username yml中定义的用户名
+     * @param superUser
+     * @param normalUser
+     * @param didChain
+     * @throws Exception
      */
-    public void signUpSigner(String username) throws Exception {
+    public void signUpSigner(ChainUser superUser, ChainUser normalUser, ChainCode didChain) throws Exception {
 
         genInvokeTran(
                 JavaType.STEP_REGISTER_USER.getCode(),
-                chainUserManager.admin(),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL"),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL").getFunc().get("signUpSigner"),
-                JsonFormat.printer().print(chainUserManager.normalUser(username).getSigner())
+                superUser,
+                didChain,
+                "signUpSigner",
+                JsonFormat.printer().print(normalUser.getSigner()
+                )
         );
     }
 
     /**
      * 向身份链注册一下 部署合约的权限 ，如 credence-net:xxxTPL.deploy
-     * @param chainCode  合约
-     * @param description  描述。如：部署合约TestTPL的操作
-     * @throws Exception   exception
+     * @param superUser 管理员
+     * @param chainCode 合约
+     * @param didChain  系统合约
+     * @param description
+     * @throws Exception
      */
-    public void signUpDeploy(ChainCode chainCode, String description) throws Exception {
-
+    public void signUpDeploy(ChainUser superUser, ChainCode chainCode, ChainCode didChain, String description) throws Exception {
 
         String fullName = chainNetManager.net(BIZ) + ":%s." + "deploy";
 
         Peer.Operate operate = genOperate(
                 String.format(fullName, chainCode.getChaincodeId().getChaincodeName()),
                 description,
-                chainUserManager.admin().getCertId().getCreditCode(),
+                superUser.getCertId().getCreditCode(),
                 false
         );
 
         genInvokeTran(
                 JavaType.STEP_REGISTER_OPERATE.getCode(),
-                chainUserManager.admin(),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL"),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL").getFunc().get("signUpOperate"),
+                superUser,
+                didChain,
+                "signUpOperate",
                 JsonFormat.printer().print(operate));
     }
 
 
     /**
      * superAdmin授权给 业务链:用户名 可部署 xxxTPL 的权限"
-     * @param username     用户名。yml中的用户名
+     * @param superUser  管理员
+     * @param normalUser 用户
      * @param chainCode  合约
-     * @throws Exception   exception
+     * @param didChain   系统合约
+     * @throws Exception
      */
-    public void grantOperate(String username, ChainCode chainCode) throws Exception {
+    public void grantOperate(ChainUser superUser, ChainUser normalUser, ChainCode chainCode, ChainCode didChain) throws Exception {
 
         String fullName = chainNetManager.net(BIZ).getPrefix() + ":%s." + "deploy";
 
         // step4: superAdmin授权给usr0部署合约("credence-net:CredenceTPL.deploy")的权限，向<身份链>提交
         Peer.Authorize authorize = genAuthorize(
                 chainNetManager.net(BIZ).getPrefix() + ":" + UUID.randomUUID(),
-                chainUserManager.admin().getCertId().getCreditCode(),
-                chainUserManager.normalUser(username).getCertId().getCreditCode(),
+                superUser.getCertId().getCreditCode(),
+                normalUser.getCertId().getCreditCode(),
                 String.format(fullName, chainCode.getChaincodeId().getChaincodeName())
         );
 
         genInvokeTran(
                 JavaType.STEP_GRANT_AUTH.getCode(),
-                chainUserManager.admin(),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL"),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL").getFunc().get("grantOperate"),
+                superUser,
+                didChain,
+                "grantOperate",
                 JSONObject.toJSONString(Collections.singletonList(JsonFormat.printer().print(authorize)))
         );
     }
@@ -129,13 +132,13 @@ public class ChainService {
 
     /**
      * 有了向业务链部署TPL的权限，因此向业务链部署合约
-     * @param username     用户名。yml中的用户名
-     * @param tplPath      合约路径。如：/User/lihao/test/TestTPL.scala
-     * @param chainCode  合约
+     * @param normalUser
+     * @param chainCode
+     * @throws Exception
      */
-    public void deployContract(String username, String tplPath, ChainCode chainCode) throws Exception {
+    public void deployContract(ChainUser normalUser, ChainCode chainCode) throws Exception {
         // 向业务链提交，部署合约
-        String tplString = FileUtils.readFileToString(new File(tplPath), StandardCharsets.UTF_8);
+        String tplString = FileUtils.readFileToString(new File(chainCode.getPath()), StandardCharsets.UTF_8);
 
         Peer.ChaincodeDeploy chaincodeDeploy = Peer.ChaincodeDeploy.newBuilder()
                 .setTimeout(5000)
@@ -149,12 +152,12 @@ public class ChainService {
                 .build();
         DeployTran deployTran = DeployTran.newBuilder()
                 .setTxid(DigestUtils.sha256Hex(tplString))
-                .setCertId(chainUserManager.normalUser(username).getCertId())
+                .setCertId(normalUser.getCertId())
                 .setChaincodeId(chainCode.getChaincodeId())
                 .setChaincodeDeploy(chaincodeDeploy)
                 .build();
 
-        Peer.Transaction transaction = chainUserManager.normalUser(username).getTranCreator().createDeployTran(deployTran);
+        Peer.Transaction transaction = normalUser.getTranCreator().createDeployTran(deployTran);
 
         chainNetManager.net(BIZ).getTranPostClient().postSignedTran(transaction);
 
@@ -169,26 +172,17 @@ public class ChainService {
 
     }
 
-    /**
-     * 有了向业务链部署TPL的权限，因此向业务链部署合约
-     * @param username     用户名。yml中的用户名
-     * @param chainCode      合约定义类
-     */
-    public void deployContract(String username, ChainCode chainCode) throws Exception {
-
-        this.deployContract(username, chainCode.getPath(), chainCode);
-
-    }
 
     /**
      * 合约部署者注册合约的某个方法
-     * @param username    用户名。yml中的用户名
-     * @param chainCode  合约
-     * @param funcName     合约中的方法名。
-     * @param description  描述。 如：TestTPL.createValue
-     * @throws Exception   exception
+     * @param normalUser
+     * @param chainCode
+     * @param funcName
+     * @param description
+     * @param didCode
+     * @throws Exception
      */
-    public void signUpOperate(String username, ChainCode chainCode, String funcName, String description) throws Exception {
+    public void signUpOperate(ChainUser normalUser, ChainCode chainCode, String funcName, String description, ChainCode didCode) throws Exception {
 
         String fullName = chainNetManager.net(BIZ).getPrefix() + ":%s.%s";
 
@@ -196,32 +190,32 @@ public class ChainService {
         Peer.Operate operate = genOperate(
                 String.format(fullName, chainCode.getChaincodeId().getChaincodeName(), funcName),
                 description,
-                chainUserManager.normalUser(username).getCertId().getCreditCode(),
+                normalUser.getCertId().getCreditCode(),
                 true
         );
 
         genInvokeTran(
                 JavaType.STEP_USER_REGISTER_FUNCTION.getCode(),
-                chainUserManager.normalUser(username),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL"),
-                chainCodeIdManager.chainCode("RdidOperateAuthorizeTPL").getFunc().get("signUpOperate"),
+                normalUser,
+                didCode,
+                "signUpOperate",
                 JsonFormat.printer().print(operate)
         );
     }
 
     /**
      * 调用合约
-     * @param username  用户名。yml中的用户名
+     * @param normalUser 用户
      * @param chainCode  合约
-     * @param funcName     合约中的方法名。
-     * @param params       合约方法参数。 json字符串
-     * @throws Exception   excception
+     * @param funcName   合约方法
+     * @param params json字符串
+     * @throws Exception
      */
-    public void userInvoke(String username, ChainCode chainCode, String funcName, String params) throws Exception {
+    public void userInvoke(ChainUser normalUser, ChainCode chainCode, String funcName, String params) throws Exception {
 
         genInvokeTran(
                 JavaType.STEP_USER_INVOKE.getCode(),
-                chainUserManager.normalUser(username),
+                normalUser,
                 chainCode,
                 funcName,
                 params
@@ -275,16 +269,14 @@ public class ChainService {
 
 
         if(ADMIN.equals(chainUser.getType()) || code == JavaType.STEP_USER_REGISTER_FUNCTION.getCode()) {
-            Peer.Transaction tran =
-                    ADMIN.equals(chainUser.getType())
-                            ? chainUserManager.admin().getTranCreator().createInvokeTran(invokeTran) : chainUserManager.normalUser(username).getTranCreator().createInvokeTran(invokeTran);
+            Peer.Transaction tran = chainUser.getTranCreator().createInvokeTran(invokeTran);
             chainNetManager.net(IDENTITY).getTranPostClient().postSignedTran(tran);
             TimeUnit.SECONDS.sleep(5);
             transactionResult = chainNetManager.net(IDENTITY).getChainInfoClient().getTranResultByTranId(tranId);
 
         } else
         {
-            Peer.Transaction tran = chainUserManager.normalUser(username).getTranCreator().createInvokeTran(invokeTran);
+            Peer.Transaction tran = chainUser.getTranCreator().createInvokeTran(invokeTran);
             if(code == JavaType.STEP_USER_INVOKE.getCode()) {
                 String tranHex = Hex.encodeHexString(tran.toByteArray());
                 chainNetManager.net(BIZ).getTranPostClient().postSignedTran(tranHex);

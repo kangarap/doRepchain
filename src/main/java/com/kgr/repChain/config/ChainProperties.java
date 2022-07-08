@@ -1,8 +1,6 @@
 package com.kgr.repChain.config;
 
-import com.kgr.repChain.entity.ChainCode;
 import com.kgr.repChain.entity.ChainNet;
-import com.kgr.repChain.entity.ChainUser;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
@@ -18,6 +16,6 @@ import java.util.List;
 @ConfigurationProperties(prefix = "chain")
 public class ChainProperties {
     private List<ChainNet> net;
-    private List<ChainUser> user;
-    private List<ChainCode> chaincode;
+//    private List<ChainUser> user;
+//    private List<ChainCode> chaincode;
 }

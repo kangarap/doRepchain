@@ -1,28 +1,20 @@
 package com.kgr.repChain.config;
 
 import com.google.common.collect.Maps;
-import com.kgr.repChain.core.ChainCodeIdManager;
 import com.kgr.repChain.core.ChainNetManager;
 import com.kgr.repChain.core.ChainService;
-import com.kgr.repChain.core.ChainUserManager;
-import com.kgr.repChain.entity.ChainCode;
 import com.kgr.repChain.entity.ChainNet;
-import com.kgr.repChain.entity.ChainUser;
-import com.rcjava.protos.Peer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import static com.kgr.repChain.utils.Constants.*;
+import static com.kgr.repChain.utils.Constants.BIZ;
+import static com.kgr.repChain.utils.Constants.IDENTITY;
 
 /**
  * @author kgr
@@ -36,56 +28,6 @@ public class ChainAutoConfiguration {
     @Resource
     private ChainProperties chainProperties;
 
-    @Bean
-    public ChainUserManager chainUserManager() throws IOException {
-
-        Optional<ChainUser> chainUserOptional =  chainProperties.getUser().stream().filter(user -> ADMIN.equals(user.getType())).findFirst();
-
-        if(!chainUserOptional.isPresent()) {
-            throw new RuntimeException("请在配置文件中添加Admin项");
-        }
-
-        ChainUser user_ = chainUserOptional.get();
-        ChainUser superUsers = new ChainUser(
-                user_.getType(),
-                user_.getMobile(),
-                user_.getUsername(),
-                user_.getCreditCode(),
-                user_.getJks().getPath(),
-                user_.getJks().getPassword(),
-                user_.getJks().getAlias());
-
-        Map<String, ChainUser> normalUserMap = new HashMap<>();
-
-        List<ChainUser> chainUsers = chainProperties.getUser().stream().filter(user -> !ADMIN.equals(user.getType())).collect(Collectors.toList());
-
-        chainUsers.forEach(user -> {
-            try {
-
-                ChainUser normalUser = new ChainUser(
-                        user.getType(),
-                        user.getMobile(),
-                        user.getUsername(),
-                        user.getCreditCode(),
-                        user.getJks().getPath(),
-                        user.getJks().getPassword(),
-                        user.getJks().getAlias());
-
-                normalUserMap.put(normalUser.getUsername(), normalUser);
-
-            } catch (IOException e) {
-                throw new RuntimeException("Normal项加载失败，请检查配置文件！");
-            }
-        });
-
-        if(normalUserMap.size() == 0 ) {
-            throw new RuntimeException("请在配置文件中添加Normal项");
-        }
-        log.info("==========> 普通用户注入成功，共{}个", normalUserMap.size());
-
-        return new ChainUserManager(superUsers, normalUserMap);
-
-    }
 
     public ChainNet parseNet(String type) {
 
@@ -111,32 +53,8 @@ public class ChainAutoConfiguration {
 
 
     @Bean
-    public ChainCodeIdManager chainCodeIdManager() {
-        Map<String, ChainCode> chainCodeMap = new HashMap<>();
-
-        List<ChainCode> chainCodeList = chainProperties.getChaincode();
-
-        if(chainCodeList.size() == 0) {
-            throw new RuntimeException("请在配置文件中添加合约信息");
-        }
-
-        chainCodeList.forEach(chainCode -> {
-            chainCode.setChaincodeId(Peer.ChaincodeId.newBuilder().setChaincodeName(chainCode.getName()).setVersion(chainCode.getVersion()).build());
-            chainCodeMap.put(chainCode.getName(), chainCode);
-        });
-
-        log.info("==========> 合约注入成功，共{}个", chainCodeList.size());
-        return new ChainCodeIdManager(chainCodeMap);
-    }
-
-
-    @Bean
-    public ChainService chainService(
-            ChainUserManager chainUserManager,
-            ChainNetManager chainNetManager,
-            ChainCodeIdManager chainCodeIdManager
-    ) {
-        return new ChainService(chainUserManager, chainNetManager, chainCodeIdManager);
+    public ChainService chainService(ChainNetManager chainNetManager) {
+        return new ChainService(chainNetManager);
     }
 }
 
