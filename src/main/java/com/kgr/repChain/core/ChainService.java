@@ -82,7 +82,7 @@ public class ChainService {
      */
     public void signUpDeploy(ChainUser superUser, ChainCode chainCode, ChainCode didChain, String description) throws Exception {
 
-        String fullName = chainNetManager.net(BIZ) + ":%s." + "deploy";
+        String fullName = chainNetManager.net(BIZ).getPrefix() + ":%s." + "deploy";
 
         Peer.Operate operate = genOperate(
                 String.format(fullName, chainCode.getChaincodeId().getChaincodeName()),
