@@ -209,7 +209,6 @@ public class ChainService {
      * @param chainCode  合约
      * @param funcName   合约方法
      * @param params json字符串
-     * @throws Exception
      * @return 区块链交易id
      */
     public String userInvoke(ChainUser normalUser, ChainCode chainCode, String funcName, String params) throws Exception {
