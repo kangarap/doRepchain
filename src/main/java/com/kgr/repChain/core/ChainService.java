@@ -210,10 +210,11 @@ public class ChainService {
      * @param funcName   合约方法
      * @param params json字符串
      * @throws Exception
+     * @return 区块链交易id
      */
-    public void userInvoke(ChainUser normalUser, ChainCode chainCode, String funcName, String params) throws Exception {
+    public String userInvoke(ChainUser normalUser, ChainCode chainCode, String funcName, String params) throws Exception {
 
-        genInvokeTran(
+        return genInvokeTran(
                 JavaType.STEP_USER_INVOKE.getCode(),
                 normalUser,
                 chainCode,
@@ -243,9 +244,9 @@ public class ChainService {
      * @param chainCode 操作合约
      * @param functionName 合约方法名称
      * @param params     操作合约方法参数 json格式
+     * @return String    区块链交易id
      */
-
-    private void genInvokeTran(int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception {
+    private String genInvokeTran(int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception {
         String tranId =  UUID.randomUUID().toString();
 
         Peer.TransactionResult transactionResult;
@@ -296,6 +297,7 @@ public class ChainService {
             throw new Exception("出错了：" + actionResult.getReason());
         }
 
+        return tranId;
     }
 
 
