@@ -300,7 +300,10 @@ public class ChainService {
      */
     public String queryData(String bid) throws Exception {
 
-        return chainConnectorManager.queryData(chainNetManager.net(BIZ).getHost() + "connector/queryDataStatus/" + bid);
+        UpChainInfo upChainInfo = UpChainInfo.builder()
+                .url(chainNetManager.net(BIZ).getHost() + "connector/queryDataStatus/" + bid)
+                .build();
+        return chainConnectorManager.queryData(upChainInfo);
     }
 
 

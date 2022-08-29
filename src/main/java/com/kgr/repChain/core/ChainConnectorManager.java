@@ -38,20 +38,29 @@ public class ChainConnectorManager {
     public String createConnector(UpChainInfo upChainInfo, Jks jks) throws Exception{
         HttpClientBuilder clientBuilder = HttpClients.custom();
 
-        if(!Objects.isNull(jks)) {
+        // 默认http
+        String url = upChainInfo.getUrl();
 
+        if(!url.startsWith("http") && !url.startsWith("https")) {
+            url = "http://" + url;
+        }
+
+        if(!Objects.isNull(jks)) {
             SSLContext sslContext = SSLContexts.custom()
                     .loadTrustMaterial(new File(jks.getPath()), jks.getPassword().toCharArray(), new TrustSelfSignedStrategy())
                     .loadKeyMaterial(new File(jks.getPath()),  jks.getPassword().toCharArray(),  jks.getPassword().toCharArray())
                     .build();
 
             clientBuilder.setSSLContext(sslContext).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
+
+            url = url.replace("http", "https");
         }
+
 
         CloseableHttpClient httpClient = clientBuilder.build();
 
         RequestConfig config = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
-        HttpPost httpPost = new HttpPost(URI.create(upChainInfo.getUrl()));
+        HttpPost httpPost = new HttpPost(URI.create(url));
         httpPost.setConfig(config);
 
         StringEntity entity = new StringEntity(JSON.toJSONString(upChainInfo), StandardCharsets.UTF_8);
@@ -68,11 +77,11 @@ public class ChainConnectorManager {
     }
 
 
-    public String queryData(String url) throws Exception{
+    public String queryData(UpChainInfo upChainInfo) throws Exception{
 
         CloseableHttpClient httpClient = HttpClients.custom().build();
         RequestConfig config = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
-        HttpPost httpPost = new HttpPost(URI.create(url));
+        HttpPost httpPost = new HttpPost(URI.create(upChainInfo.getUrl()));
         httpPost.setConfig(config);
         httpPost.setHeader("Content-Type", "application/json");
 

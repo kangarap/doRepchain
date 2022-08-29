@@ -1,7 +1,9 @@
 package com.kgr.repChain.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author kgr
@@ -9,6 +11,8 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UpChainInfo {
     private String url;
     private String bid;
