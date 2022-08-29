@@ -1,6 +1,7 @@
 package com.kgr.repChain.config;
 
 import com.google.common.collect.Maps;
+import com.kgr.repChain.core.ChainConnectorManager;
 import com.kgr.repChain.core.ChainNetManager;
 import com.kgr.repChain.core.ChainService;
 import com.kgr.repChain.entity.ChainNet;
@@ -51,10 +52,15 @@ public class ChainAutoConfiguration {
         return new ChainNetManager(map);
     }
 
+    @Bean
+    public ChainConnectorManager chainConnectorManager() {
+        return new ChainConnectorManager();
+    }
+
 
     @Bean
-    public ChainService chainService(ChainNetManager chainNetManager) {
-        return new ChainService(chainNetManager);
+    public ChainService chainService(ChainNetManager chainNetManager, ChainConnectorManager chainConnectorManager) {
+        return new ChainService(chainNetManager, chainConnectorManager);
     }
 }
 

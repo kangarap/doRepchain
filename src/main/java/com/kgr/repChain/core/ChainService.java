@@ -5,6 +5,8 @@ import com.google.protobuf.Timestamp;
 import com.google.protobuf.util.JsonFormat;
 import com.kgr.repChain.entity.ChainCode;
 import com.kgr.repChain.entity.ChainUser;
+import com.kgr.repChain.entity.Jks;
+import com.kgr.repChain.entity.UpChainInfo;
 import com.rcjava.protos.Peer;
 import com.rcjava.tran.impl.DeployTran;
 import com.rcjava.tran.impl.InvokeTran;
@@ -31,6 +33,8 @@ import static com.kgr.repChain.utils.Constants.*;
 public class ChainService {
 
     private final ChainNetManager chainNetManager;
+
+    private final ChainConnectorManager chainConnectorManager;
 
     /**
      * 1～6 就是新用户从注册到最后调用合约代码的过程
@@ -233,6 +237,70 @@ public class ChainService {
     public void createJks(String saveFile, String alias, String password) throws Exception {
 
         CertUtil.genJksFile(new File(saveFile), alias, password);
+    }
+
+
+    /**
+     * 向中间件提交数据
+     * @param bizId 业务id
+     * @param chainCode 合约名字
+     * @param funcName  合约中方法名
+     * @param params    前者对应参数 json格式字符串
+     * @return 区块链返回
+     * @throws Exception
+     */
+    public String upConnector(String bizId, ChainCode chainCode, String funcName, String params) throws Exception{
+        UpChainInfo upChainInfo = new UpChainInfo(
+                chainNetManager.net(BIZ).getHost() + "/connector/upChain",
+                bizId,
+                chainNetManager.net(BIZ).getPrefix(),
+                chainCode.getName(),
+                chainCode.getVersion().toString(),
+                "",
+                funcName,
+                params
+        );
+        return chainConnectorManager.createConnector(upChainInfo);
+    }
+
+    /**
+     * 向中间件提交数据
+     * @param bizId 业务id
+     * @param chainCode 合约名字
+     * @param funcName  合约中方法名
+     * @param params    前者对应参数 json格式字符串
+     * @param jks    https用到的证书
+     * @return 区块链返回
+     * @throws Exception
+     */
+    public String upConnector(String bizId, ChainCode chainCode, String funcName, String params, Jks jks) throws Exception{
+        UpChainInfo upChainInfo = new UpChainInfo(
+                chainNetManager.net(BIZ).getHost() + "/connector/upChain",
+                bizId,
+                chainNetManager.net(BIZ).getPrefix(),
+                chainCode.getName(),
+                chainCode.getVersion().toString(),
+                "",
+                funcName,
+                params
+        );
+       return chainConnectorManager.createConnector(upChainInfo, jks);
+    }
+
+
+    /**
+     *  查询对应业务id区块链数据状态
+     *  status：
+     *  1：中间件接受到交易了，还未提交到RepChain
+     *  2：中间件构造好交易并提交到RepChain了，还未出块
+     *  3：交易被RepChain打包入块了
+     *  4：没有找到对应的数据和交易
+     * @param bid 上链时候业务id
+     * @return
+     */
+    public String queryData(String bid) throws Exception {
+
+        return chainConnectorManager.queryData(chainNetManager.net(BIZ).getHost() + "connector/queryDataStatus/" + bid);
     }
 
 

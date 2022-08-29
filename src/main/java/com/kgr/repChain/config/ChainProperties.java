@@ -16,6 +16,4 @@ import java.util.List;
 @ConfigurationProperties(prefix = "chain")
 public class ChainProperties {
     private List<ChainNet> net;
-//    private List<ChainUser> user;
-//    private List<ChainCode> chaincode;
 }
