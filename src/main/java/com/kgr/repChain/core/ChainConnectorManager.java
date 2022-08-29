@@ -4,6 +4,7 @@ import com.alibaba.fastjson2.JSON;
 import com.kgr.repChain.entity.Jks;
 import com.kgr.repChain.entity.UpChainInfo;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -28,6 +29,7 @@ import java.util.Objects;
  * @create 2022-08-29 11:33
  */
 @AllArgsConstructor
+@Slf4j
 public class ChainConnectorManager {
 
 
@@ -56,6 +58,7 @@ public class ChainConnectorManager {
             url = url.replace("http", "https");
         }
 
+        log.info("=======> {}", url);
 
         CloseableHttpClient httpClient = clientBuilder.build();
 
