@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 
 import java.util.Map;
 
-import static com.kgr.repChain.utils.Constants.BIZ;
-import static com.kgr.repChain.utils.Constants.IDENTITY;
+import static com.kgr.repChain.utils.Constants.*;
 
 /**
  * @author kgr
@@ -24,6 +23,10 @@ public class ChainNetManager {
         }
 
         return map.get(type);
+    }
+
+    public ChainNet connector() {
+        return this.net(CONNECTOR);
     }
 
 

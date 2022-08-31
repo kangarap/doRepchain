@@ -11,6 +11,8 @@ public interface Constants {
     String IDENTITY = "identity";
     String BIZ = "biz";
 
+    String CONNECTOR = "connector";
+
     /**
      * 用户类型
      */

@@ -251,7 +251,7 @@ public class ChainService {
      */
     public String upConnector(String bizId, ChainCode chainCode, String funcName, String params) throws Exception{
         UpChainInfo upChainInfo = new UpChainInfo(
-                chainNetManager.net(BIZ).getHost() + "/connector/upChain",
+                chainNetManager.connector().getHost() + "/connector/upChain",
                 bizId,
                 chainNetManager.net(BIZ).getPrefix(),
                 chainCode.getName(),
@@ -275,7 +275,7 @@ public class ChainService {
      */
     public String upConnector(String bizId, ChainCode chainCode, String funcName, String params, Jks jks) throws Exception{
         UpChainInfo upChainInfo = new UpChainInfo(
-                chainNetManager.net(BIZ).getHost() + "/connector/upChain",
+                chainNetManager.connector().getHost() + "/connector/upChain",
                 bizId,
                 chainNetManager.net(BIZ).getPrefix(),
                 chainCode.getName(),
@@ -301,7 +301,7 @@ public class ChainService {
     public String queryData(String bid) throws Exception {
 
         UpChainInfo upChainInfo = UpChainInfo.builder()
-                .url(chainNetManager.net(BIZ).getHost() + "connector/queryDataStatus/" + bid)
+                .url(chainNetManager.connector().getHost() + "connector/queryDataStatus/" + bid)
                 .build();
         return chainConnectorManager.queryData(upChainInfo);
     }

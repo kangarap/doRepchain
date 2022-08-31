@@ -14,8 +14,7 @@ import javax.annotation.Resource;
 import java.util.Map;
 import java.util.Optional;
 
-import static com.kgr.repChain.utils.Constants.BIZ;
-import static com.kgr.repChain.utils.Constants.IDENTITY;
+import static com.kgr.repChain.utils.Constants.*;
 
 /**
  * @author kgr
@@ -48,6 +47,7 @@ public class ChainAutoConfiguration {
         Map<String, ChainNet> map = Maps.newHashMap();
         map.put(IDENTITY, parseNet(IDENTITY));
         map.put(BIZ, parseNet(BIZ));
+        map.put(CONNECTOR, parseNet(CONNECTOR));
 
         return new ChainNetManager(map);
     }
