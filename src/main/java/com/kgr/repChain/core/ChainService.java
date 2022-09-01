@@ -302,7 +302,7 @@ public class ChainService {
     public String queryData(String bid) throws Exception {
 
         UpChainInfo upChainInfo = UpChainInfo.builder()
-                .url(chainNetManager.connector().getHost() + "connector/queryDataStatus/" + bid)
+                .url(chainNetManager.connector().getHost() + "/connector/queryDataStatus/" + bid)
                 .build();
         return chainConnectorManager.queryData(upChainInfo);
     }
