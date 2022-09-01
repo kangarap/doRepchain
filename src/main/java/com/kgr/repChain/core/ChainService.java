@@ -269,11 +269,12 @@ public class ChainService {
      * @param chainCode 合约名字
      * @param funcName  合约中方法名
      * @param params    前者对应参数 json格式字符串
-     * @param jks    https用到的证书
+     * @param keyJks    https用到的证书
+     * @param trustJks  https用到的证书
      * @return 区块链返回
      * @throws Exception
      */
-    public String upConnector(String bizId, ChainCode chainCode, String funcName, String params, Jks jks) throws Exception{
+    public String upConnector(String bizId, ChainCode chainCode, String funcName, String params, Jks keyJks, Jks trustJks) throws Exception{
         UpChainInfo upChainInfo = new UpChainInfo(
                 chainNetManager.connector().getHost() + "/connector/upChain",
                 bizId,
@@ -284,7 +285,7 @@ public class ChainService {
                 funcName,
                 params
         );
-       return chainConnectorManager.createConnector(upChainInfo, jks);
+       return chainConnectorManager.createConnector(upChainInfo, keyJks, trustJks);
     }
 
 

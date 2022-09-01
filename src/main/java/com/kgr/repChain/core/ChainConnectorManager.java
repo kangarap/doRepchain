@@ -34,10 +34,10 @@ public class ChainConnectorManager {
 
 
     public String createConnector(UpChainInfo upChainInfo) throws Exception{
-        return this.createConnector(upChainInfo, null);
+        return this.createConnector(upChainInfo, null, null);
     }
 
-    public String createConnector(UpChainInfo upChainInfo, Jks jks) throws Exception{
+    public String createConnector(UpChainInfo upChainInfo, Jks keyJks, Jks trustJks) throws Exception{
         HttpClientBuilder clientBuilder = HttpClients.custom();
 
         // 默认http
@@ -47,10 +47,10 @@ public class ChainConnectorManager {
             url = "http://" + url;
         }
 
-        if(!Objects.isNull(jks)) {
+        if(!Objects.isNull(keyJks) && !Objects.isNull(trustJks)) {
             SSLContext sslContext = SSLContexts.custom()
-                    .loadTrustMaterial(new File(jks.getPath()), jks.getPassword().toCharArray(), new TrustSelfSignedStrategy())
-                    .loadKeyMaterial(new File(jks.getPath()),  jks.getPassword().toCharArray(),  jks.getPassword().toCharArray())
+                    .loadTrustMaterial(new File(trustJks.getPath()), trustJks.getPassword().toCharArray(), new TrustSelfSignedStrategy())
+                    .loadKeyMaterial(new File(keyJks.getPath()),  keyJks.getPassword().toCharArray(),  keyJks.getPassword().toCharArray())
                     .build();
 
             clientBuilder.setSSLContext(sslContext).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
