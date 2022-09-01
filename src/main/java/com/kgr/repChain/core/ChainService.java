@@ -307,6 +307,25 @@ public class ChainService {
         return chainConnectorManager.queryData(upChainInfo);
     }
 
+    /**
+     *  查询对应业务id区块链数据状态
+     *  status：
+     *  1：中间件接受到交易了，还未提交到RepChain
+     *  2：中间件构造好交易并提交到RepChain了，还未出块
+     *  3：交易被RepChain打包入块了
+     *  4：没有找到对应的数据和交易
+     * @param bid 上链时候业务id
+     * @param keyJks https 双向认证的证书
+     * @param trustJks https 双向认证的证书
+     */
+    public String queryData(String bid, Jks keyJks, Jks trustJks) throws Exception {
+
+        UpChainInfo upChainInfo = UpChainInfo.builder()
+                .url(chainNetManager.connector().getHost() + "/connector/queryDataStatus/" + bid)
+                .build();
+        return chainConnectorManager.queryData(upChainInfo, keyJks, trustJks);
+    }
+
 
     /**
      *

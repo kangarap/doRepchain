@@ -38,7 +38,12 @@ public class ChainConnectorManager {
     }
 
     public String createConnector(UpChainInfo upChainInfo, Jks keyJks, Jks trustJks) throws Exception{
-        HttpClientBuilder clientBuilder = HttpClients.custom();
+
+        return createRequest(upChainInfo, keyJks, trustJks, true);
+    }
+
+
+    private String createRequest(UpChainInfo upChainInfo, Jks keyJks, Jks trustJks, boolean entity) throws Exception {
 
         // 默认http
         String url = upChainInfo.getUrl();
@@ -47,6 +52,16 @@ public class ChainConnectorManager {
             url = "http://" + url;
         }
 
+        boolean isHttps = !Objects.isNull(keyJks) && !Objects.isNull(trustJks);
+
+        if(isHttps) {
+            url = url.replace("http", "https");
+        }
+
+        log.info("=======> {}", url);
+
+        HttpClientBuilder clientBuilder = HttpClients.custom();
+
         if(!Objects.isNull(keyJks) && !Objects.isNull(trustJks)) {
             SSLContext sslContext = SSLContexts.custom()
                     .loadTrustMaterial(new File(trustJks.getPath()), trustJks.getPassword().toCharArray(), new TrustSelfSignedStrategy())
@@ -54,11 +69,7 @@ public class ChainConnectorManager {
                     .build();
 
             clientBuilder.setSSLContext(sslContext).setSSLHostnameVerifier(NoopHostnameVerifier.INSTANCE);
-
-            url = url.replace("http", "https");
         }
-
-        log.info("=======> {}", url);
 
         CloseableHttpClient httpClient = clientBuilder.build();
 
@@ -66,8 +77,10 @@ public class ChainConnectorManager {
         HttpPost httpPost = new HttpPost(URI.create(url));
         httpPost.setConfig(config);
 
-        StringEntity entity = new StringEntity(JSON.toJSONString(upChainInfo), StandardCharsets.UTF_8);
-        httpPost.setEntity(entity);
+        if(entity) {
+            httpPost.setEntity(new StringEntity(JSON.toJSONString(upChainInfo), StandardCharsets.UTF_8));
+        }
+
         httpPost.setHeader("Content-Type", "application/json");
         // 发送Post请求
         CloseableHttpResponse response = httpClient.execute(httpPost);
@@ -79,22 +92,13 @@ public class ChainConnectorManager {
         return res;
     }
 
+    public String queryData(UpChainInfo upChainInfo, Jks keyJks, Jks trustJks) throws Exception{
+
+
+        return createRequest(upChainInfo, keyJks, trustJks, false);
+    }
 
     public String queryData(UpChainInfo upChainInfo) throws Exception{
-
-        CloseableHttpClient httpClient = HttpClients.custom().build();
-        RequestConfig config = RequestConfig.custom().setSocketTimeout(10000).setConnectTimeout(10000).build();
-        HttpPost httpPost = new HttpPost(URI.create(upChainInfo.getUrl()));
-        httpPost.setConfig(config);
-        httpPost.setHeader("Content-Type", "application/json");
-
-        // 发送Post请求
-        CloseableHttpResponse response = httpClient.execute(httpPost);
-        // 获取响应
-        HttpEntity responseEntity = response.getEntity();
-        // 将响应转换为字符串
-        String res = EntityUtils.toString(responseEntity, StandardCharsets.UTF_8);
-        EntityUtils.consumeQuietly(responseEntity);
-        return res;
+        return queryData(upChainInfo, null, null);
     }
 }
