@@ -207,6 +207,29 @@ public class ChainService {
         );
     }
 
+
+    /**
+     * 调用合约
+     * @param tranId     交易id
+     * @param normalUser 用户
+     * @param chainCode  合约
+     * @param funcName   合约方法
+     * @param params json字符串
+     * @return 区块链交易id
+     */
+    public String userInvoke(String tranId, ChainUser normalUser, ChainCode chainCode, String funcName, String params) throws Exception {
+
+        return genInvokeTran(
+                tranId,
+                JavaType.STEP_USER_INVOKE.getCode(),
+                normalUser,
+                chainCode,
+                funcName,
+                params
+        );
+    }
+
+
     /**
      * 调用合约
      * @param normalUser 用户
@@ -329,6 +352,7 @@ public class ChainService {
 
     /**
      *
+     * @param tranId     交易id
      * @param code       操作类型
      * @param chainUser  操作用户
      * @param chainCode 操作合约
@@ -336,11 +360,9 @@ public class ChainService {
      * @param params     操作合约方法参数 json格式
      * @return String    区块链交易id
      */
-    private String genInvokeTran(int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception {
-        String tranId =  UUID.randomUUID().toString();
+    private String genInvokeTran(String tranId, int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception{
 
         Peer.TransactionResult transactionResult;
-
 
         Peer.CertId certId = chainUser.getCertId();
         String username = chainUser.getUsername();
@@ -388,6 +410,22 @@ public class ChainService {
         }
 
         return tranId;
+
+    }
+
+
+    /**
+     *
+     * @param code       操作类型
+     * @param chainUser  操作用户
+     * @param chainCode 操作合约
+     * @param functionName 合约方法名称
+     * @param params     操作合约方法参数 json格式
+     * @return String    区块链交易id
+     */
+    private String genInvokeTran(int code, ChainUser chainUser, ChainCode chainCode, String functionName, String params) throws Exception {
+        String tranId =  UUID.randomUUID().toString();
+        return this.genInvokeTran(tranId, code, chainUser, chainCode, functionName, params);
     }
 
 
